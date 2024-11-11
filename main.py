@@ -9,6 +9,7 @@ from pyspark.sql.types import (
 import pyspark.sql.functions as F
 
 LOG_FILE = "pyspark_output.md"
+data_path = r"data/serious-injury-outcome-indicators-2000-2022.csv"
 
 def log_output(operation, output, query=None):
     """Adds to a markdown file."""
@@ -28,7 +29,7 @@ def end_spark(spark):
     spark.stop()
     return "Spark session stopped."
 
-def load_data(spark, data_path="data/serious-injury-outcome-indicators-2000-2022.csv", view_name="injuryOutcome"):
+def load_data(spark, data_path=data_path, view_name="injuryOutcome"):
     """Load data with a predefined schema."""
     schema = StructType([
         StructField("Series_reference", StringType(), True),
