@@ -51,20 +51,19 @@ def load_data(spark, data_path="data/serious-injury-outcome-indicators-2000-2022
     # Log initial data
     log_output("Load Data", df.limit(10).toPandas().to_markdown())
 
-    # Create a temporary view for SQL queries
-    df.createOrReplaceTempView(view_name)
-
     return df
 
-def query_data(spark):
+def query_data(spark, df):
     """Perform a Spark SQL query."""
     query = """
-    SELECT Age, SUM(Data_value) AS total_cases
+    SELECT Severity, COUNT(*) AS total_cases
     FROM injuryOutcome
-    WHERE Severity = 'FATAL'
-    GROUP BY Age
+    GROUP BY Severity
     ORDER BY total_cases DESC
     """
+
+    # Create a temporary view for SQL queries
+    df = df.createOrReplaceTempView("injuryOutcome")
 
     result_df = spark.sql(query)
 
@@ -92,7 +91,7 @@ if __name__ == "__main__":
     df = load_data(spark)
 
     # Perform SQL query
-    query_data(spark)
+    query_data(spark, df)
 
     # Perform data transformation
     df_transformed = transform_data(df)
